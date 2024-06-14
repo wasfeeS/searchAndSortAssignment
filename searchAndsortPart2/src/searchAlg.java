@@ -3,18 +3,15 @@ import java.util.Scanner;
 
 public class searchAlg {
     public static void search(ArrayList<Double> data) {
+        sortAlg.sortData(data);
         Scanner scanner = new Scanner(System.in);
         String choice;
         do {
             System.out.print("Enter a lap time to search (in seconds): ");
             double searchTime = scanner.nextDouble();
-            ArrayList<Integer> duplicates = findAllDuplicates(data, searchTime);
-            if (!duplicates.isEmpty()) {
-                System.out.print("Lap time " + searchTime + " seconds found at lap(s): ");
-                for (int lap : duplicates) {
-                    System.out.print(lap + ", ");
-                }
-                System.out.println();
+            int index = binarySearch(data, searchTime);
+            if (index != -1) {
+                System.out.println("Lap time " + searchTime + " seconds found at lap " + (index + 1));
             } else {
                 System.out.println("Lap time " + searchTime + " seconds not found.");
             }
@@ -25,13 +22,22 @@ public class searchAlg {
         scanner.close();
     }
 
-    public static ArrayList<Integer> findAllDuplicates(ArrayList<Double> data, double key) {
-        ArrayList<Integer> duplicates = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i) == key) {
-                duplicates.add(i + 1);
+    public static int binarySearch(ArrayList<Double> data, double key) {
+        int low = 0;
+        int high = data.size() - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            double midVal = data.get(mid);
+
+            if (midVal < key) {
+                low = mid + 1;
+            } else if (midVal > key) {
+                high = mid - 1;
+            } else {
+                return mid;
             }
         }
-        return duplicates;
+        return -1;
     }
 }
